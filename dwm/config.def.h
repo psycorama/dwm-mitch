@@ -20,13 +20,14 @@ Rule rules[] = {
 	{ "Firefox",			False,		0 },
 	{ "Gimp",			True,		0 },
 	{ "MPlayer",			True,		0 },
-	{ "Acroread",			True,		0 },
-	{ "[Aa]udacious",		True,		0 },
+	{ "Vlc",			True,		0 },
+	{ "Xine",			True,		0 },
+	{ "Audacious",			True,		0 },
 	{ "gkrellm",			True,		0 },
 	{ "pidgin",			True,		0 },	
-	{ "[Xx]pdf",			True,		0 },	
+	{ "Xpdf",			True,		0 },	
 };
-#define INITIALWORKSPACES	 1
+#define INITIALWORKSPACES	 3
 #define MAXWORKSPACES		99
 #define MAXWSTEXTWIDTH		 6	/* must be 2*(strlen(MAXWORKSPACES)+1)  */
 #define MAXXINERAMASCREENS	 2
@@ -39,7 +40,7 @@ Bool dozoom[MAXXINERAMASCREENS] = {True};
 /* layout(s) */
 #define MWFACT			0.6	/* master width factor [0.1 .. 0.9] */
 #define RESIZEHINTS		True	/* False - respect size hints in tiled resizals */
-#define SNAP			32	/* snap pixel */
+#define SNAP			16	/* snap pixel */
 #include "bstack.c"
 #include "maximize.c"
 #include "widescreen.c"
@@ -47,9 +48,9 @@ Layout layouts[] = {
 	/* symbol		function || first entry is default */
 	{ "TTT",		bstack },
 	{ "[]=",		tile },
+	{ "= =",		widescreen },
 	{ "[ ]",		maximize },
 	{ "<><",		floating }, 
-	{ "= =",		widescreen },
 };
 
 /* key definitions */
@@ -74,26 +75,26 @@ Key keys[] = {
 	{ MODKEY|ShiftMask,		XK_d,		pushstack,	NULL },
 	{ MODKEY|ControlMask,		XK_y,		wscount,	"1" },
 	{ MODKEY|ControlMask,		XK_x,		wscount,	"-1" },
-	{ MODKEY|ControlMask,		XK_c,		killclient,	NULL },
+	{ MODKEY|ControlMask,ShiftMask,	XK_c,		killclient,	NULL },
 	{ MODKEY|ShiftMask,		XK_f,		togglefloating,	NULL },
 	{ MODKEY,			XK_f,		viewrel,	"1" },
 	{ MODKEY,			XK_s,		viewrel,	"-1" },
-	{ MODKEY|ControlMask,           XK_f,           warpmouserel,   "1" },
-	{ MODKEY|ControlMask,           XK_s,           warpmouserel,   "-1" },
+	{ MODKEY,			XK_g,           warpmouserel,   "1" },
+	{ MODKEY|ShiftMask,		XK_g,           warpmouserel,   "-1" },
 	{ MODKEY|ShiftMask|ControlMask,	XK_q,		quit,		NULL },
 	{ MODKEY|ShiftMask,		XK_1,		setlayout,	"TTT" },
 	{ MODKEY|ShiftMask,		XK_2,		setlayout,	"[]=" },
-	{ MODKEY|ShiftMask,		XK_3,		setlayout,	"<><" },
+	{ MODKEY|ShiftMask,		XK_3,		setlayout,	"= =" },
 	{ MODKEY|ShiftMask,		XK_4,		setlayout,	"[ ]" },
-	{ MODKEY|ShiftMask,		XK_5,		setlayout,	"(@)" },
+	{ MODKEY|ShiftMask,		XK_5,		setlayout,	"<><" },
 	{ MODKEY|ShiftMask,		XK_6,		setlayout,	"[\\]" },
 	/*	defining some global public private shortcuts	*/
-	{ MODKEY,			XK_Up,		spawn, 		"exec /home/andy/scripte/osd_volume.sh +"},
-	{ MODKEY,			XK_Down,	spawn, 		"exec /home/andy/scripte/osd_volume.sh -"},
-	{ MODKEY,			XK_Next,	spawn, 		"exec /home/andy/scripte/soundplayer next"},
-	{ MODKEY,			XK_Prior,	spawn, 		"exec /home/andy/scripte/soundplayer previous"},
-	{ MODKEY,			XK_Insert,	spawn, 		"exec /home/andy/scripte/soundplayer play"},
-	{ MODKEY,			XK_Home,	spawn, 		"exec /home/andy/scripte/soundplayer pause"},
-	{ MODKEY,			XK_End,		spawn, 		"exec /home/andy/scripte/soundplayer stop"},
-	{ MODKEY|ControlMask,		XK_Return,	spawn, 		"exec xlock -mode blank"},
+	{ MODKEY,			XK_Up,		spawn, 		"exec $HOME/scripte/osd_volume.sh +"},
+	{ MODKEY,			XK_Down,	spawn, 		"exec $HOME/scripte/osd_volume.sh -"},
+	{ MODKEY,			XK_Next,	spawn, 		"exec $HOME/scripte/soundplayer next"},
+	{ MODKEY,			XK_Prior,	spawn, 		"exec $HOME/scripte/soundplayer previous"},
+	{ MODKEY,			XK_Insert,	spawn, 		"exec $HOME/scripte/soundplayer play"},
+	{ MODKEY,			XK_Home,	spawn, 		"exec $HOME/scripte/soundplayer pause"},
+	{ MODKEY,			XK_End,		spawn, 		"exec $HOME/scripte/soundplayer stop"},
+	{ MODKEY|ControlMask,		XK_Return,	spawn, 		"exec $HOME/scripte/lock_it.sh"},
 };
