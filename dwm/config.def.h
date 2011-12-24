@@ -42,12 +42,14 @@ Bool dozoom[MAXXINERAMASCREENS] = {True};
 #define SNAP			32	/* snap pixel */
 #include "bstack.c"
 #include "maximize.c"
+#include "widescreen.c"
 Layout layouts[] = {
 	/* symbol		function || first entry is default */
 	{ "TTT",		bstack },
 	{ "[]=",		tile },
 	{ "[ ]",		maximize },
 	{ "<><",		floating }, 
+	{ "= =",		widescreen },
 };
 
 /* key definitions */
