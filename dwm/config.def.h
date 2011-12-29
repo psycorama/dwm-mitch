@@ -84,9 +84,9 @@ Key keys[] = {
 	{ MODKEY|ShiftMask|ControlMask,	XK_q,		quit,		NULL },
 	{ MODKEY|ShiftMask,		XK_1,		setlayout,	"TTT" },
 	{ MODKEY|ShiftMask,		XK_2,		setlayout,	"[]=" },
-	{ MODKEY|ShiftMask,		XK_3,		setlayout,	"= =" },
+	{ MODKEY|ShiftMask,		XK_3,		setlayout,	"<><" },
 	{ MODKEY|ShiftMask,		XK_4,		setlayout,	"[ ]" },
-	{ MODKEY|ShiftMask,		XK_5,		setlayout,	"<><" },
+	{ MODKEY|ShiftMask,		XK_5,		setlayout,	"= =" },
 	{ MODKEY|ShiftMask,		XK_6,		setlayout,	"[\\]" },
 	/*	defining some global public private shortcuts	*/
 	{ MODKEY,			XK_Up,		spawn, 		"exec $HOME/scripte/osd_volume.sh +"},
