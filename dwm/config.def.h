@@ -3,7 +3,7 @@
 /* appearance */
 #define BARPOS			BarTop /* BarBot, BarOff */
 #define BORDERPX		1
-#define FLOATBORDERPX		1
+#define FLOATBORDERPX		0
 #define FONT			"-misc-fixed-medium-r-normal-*-13-*-*-*-*-*-*-*"
 #define NORMBORDERCOLOR		"#080"
 #define NORMBGCOLOR		"#222"
@@ -26,6 +26,7 @@ Rule rules[] = {
 	{ "gkrellm",			True,		0 },
 	{ "pidgin",			True,		0 },	
 	{ "Xpdf",			True,		0 },	
+	{ "NeoLayoutViewer",		True,		0 },	
 };
 #define INITIALWORKSPACES	 3
 #define MAXWORKSPACES		99
@@ -58,36 +59,33 @@ Layout layouts[] = {
 /*#define SUPERKEY			Sup1Mask*/
 Key keys[] = {
 	/* modifier			key		function	argument */
-	{ MODKEY,			XK_t,		spawn,		"exec x-terminal-emulator" },
-	{ MODKEY,			XK_r ,		spawn,		"exec urxvt" },
-	{ MODKEY|ShiftMask,		XK_y,		spawn,		"exec dwm-choose" },
+	{ MODKEY,			XK_w,		spawn,		"exec x-terminal-emulator" },
+	{ MODKEY,			XK_c ,		spawn,		"exec urxvt" },
+	{ MODKEY|ShiftMask,		XK_k,		spawn,		"exec dwm-choose" },
 	{ MODKEY,			XK_Tab,		focusnext,	NULL },
 	{ MODKEY|ShiftMask,		XK_Tab,		focusprev,	NULL },
 	{ MODKEY,			XK_Return,	zoom,		NULL },
 	{ MODKEY,			XK_b,		togglebar,	NULL },
-	{ MODKEY,			XK_j,		focusnext,	NULL },
-	{ MODKEY,			XK_k,		focusprev,	NULL },
-	{ MODKEY|ControlMask,		XK_e,		setmwfact,	"+0.05" },
-	{ MODKEY|ControlMask,		XK_d,		setmwfact,	"-0.05" },
-/*	{ MODKEY|ShiftMask,		XK_e,		incnmaster,	"1" }, */
-/*	{ MODKEY|ShiftMask,		XK_d,		incnmaster,	"-1" }, */
-	{ MODKEY|ShiftMask,		XK_a,		popstack,	NULL },
-	{ MODKEY|ShiftMask,		XK_d,		pushstack,	NULL },
-	{ MODKEY|ControlMask,		XK_y,		wscount,	"1" },
-	{ MODKEY|ControlMask,		XK_x,		wscount,	"-1" },
-	{ MODKEY|ControlMask,ShiftMask,	XK_c,		killclient,	NULL },
+	{ MODKEY,			XK_n,		focusnext,	NULL },
+	{ MODKEY,			XK_r,		focusprev,	NULL },
+	{ MODKEY|ControlMask,		XK_l,		setmwfact,	"+0.05" },
+	{ MODKEY|ControlMask,		XK_a,		setmwfact,	"-0.05" },
+	{ MODKEY|ShiftMask,		XK_u,		popstack,	NULL },
+	{ MODKEY|ShiftMask,		XK_a,		pushstack,	NULL },
+	{ MODKEY|ControlMask,		XK_k,		wscount,	"1" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_k,		wscount,	"-1" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_c,		killclient,	NULL },
 	{ MODKEY|ShiftMask,		XK_f,		togglefloating,	NULL },
-	{ MODKEY,			XK_f,		viewrel,	"1" },
-	{ MODKEY,			XK_s,		viewrel,	"-1" },
-	{ MODKEY,			XK_g,           warpmouserel,   "1" },
-	{ MODKEY|ShiftMask,		XK_g,           warpmouserel,   "-1" },
+	{ MODKEY,			XK_e,		viewrel,	"1" },
+	{ MODKEY,			XK_i,		viewrel,	"-1" },
+	{ MODKEY,			XK_o,           warpmouserel,   "1" },
+	{ MODKEY|ShiftMask,		XK_o,           warpmouserel,   "-1" },
 	{ MODKEY|ShiftMask|ControlMask,	XK_q,		quit,		NULL },
 	{ MODKEY|ShiftMask,		XK_1,		setlayout,	"TTT" },
 	{ MODKEY|ShiftMask,		XK_2,		setlayout,	"[]=" },
 	{ MODKEY|ShiftMask,		XK_3,		setlayout,	"<><" },
 	{ MODKEY|ShiftMask,		XK_4,		setlayout,	"[ ]" },
 	{ MODKEY|ShiftMask,		XK_5,		setlayout,	"= =" },
-	{ MODKEY|ShiftMask,		XK_6,		setlayout,	"[\\]" },
 	/*	defining some global public private shortcuts	*/
 	{ MODKEY,			XK_Up,		spawn, 		"exec $HOME/scripte/osd_volume.sh +"},
 	{ MODKEY,			XK_Down,	spawn, 		"exec $HOME/scripte/osd_volume.sh -"},
@@ -97,4 +95,6 @@ Key keys[] = {
 	{ MODKEY,			XK_Home,	spawn, 		"exec $HOME/scripte/soundplayer pause"},
 	{ MODKEY,			XK_End,		spawn, 		"exec $HOME/scripte/soundplayer stop"},
 	{ MODKEY|ControlMask,		XK_Return,	spawn, 		"exec $HOME/scripte/lock_it.sh"},
+	{ MODKEY|ShiftMask,		XK_F8,		spawn, 		"exec $HOME/scripte/keyboard_settings.sh"},
+	{ MODKEY|ShiftMask,		XK_F9,		spawn, 		"exec $HOME/scripte/mm_v3.sh"},
 };
