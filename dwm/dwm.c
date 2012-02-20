@@ -348,6 +348,11 @@ buttonpress(XEvent *e) {
 				setlayout(NULL);
 				return;
 			}
+			if (ev->button == Button1)
+				focusnext(NULL);
+			else
+				focusprev(NULL);
+			return;
 		}
 	
 	if((c = getclient(ev->window))) {
@@ -1062,8 +1067,8 @@ movemouse(Client *c) {
 	unsigned int dui;
 	Window dummy;
 	XEvent ev;
-	int bartop = (BARPOS == BarTop) ? bh : 0;
-	int barbot = (BARPOS == BarBot) ? bh : 0;
+	int bartop = (bpos == BarTop) ? bh : 0;
+	int barbot = (bpos == BarBot) ? bh : 0;
 	
 	ocx = nx = c->x;
 	ocy = ny = c->y;
@@ -1592,6 +1597,12 @@ warpmouserel(const char *arg) {
 	Window w;
 	unsigned int mask, source;
 	
+	/* code duplication with warpmouse() because
+	 * calling one from the other would involve
+	 * converting target to a char* again or adding
+	 * a third function warpmouse_intern(int).
+	 */
+
 	if (screenmax == 1)
 	        return;
 	
@@ -1601,20 +1612,20 @@ warpmouserel(const char *arg) {
 
 	target = source = whichscreen();
 	target += i;
-	if (target < 0)
-		target = screenmax-1;
-	if (target >= screenmax)
-		target = 0;
+	while (target < 0)
+		target += screenmax;
+	while (target >= screenmax)
+		target -= screenmax;
 
 	XQueryPointer(dpy, root, &w, &w, &x, &y, &d, &d, &mask);
 
 	x -= sx[source];
 	y -= sy[source];
 
-        if (x > sw[target])
-                x = sw[target];
-        if (y > sh[target])
-                y = sh[target];
+        if (x >= sw[target])
+                x = sw[target]-1;
+        if (y >= sh[target])
+                y = sh[target]-1;
 
         XWarpPointer(dpy, None, root, 0, 0, 0, 0, x + sx[target], y + sy[target]);
 	focus(NULL);
@@ -1799,10 +1810,10 @@ warpmouse(const char *arg) {
 	x -= sx[source];
 	y -= sy[source];
 
-        if (x > sw[target])
-                x = sw[target];
-        if (y > sh[target])
-                y = sh[target];
+        if (x >= sw[target])
+                x = sw[target]-1;
+        if (y >= sh[target])
+                y = sh[target]-1;
 
         XWarpPointer(dpy, None, root, 0, 0, 0, 0, x + sx[target], y + sy[target]);
 	focus(NULL);
