@@ -19,11 +19,11 @@ Rule rules[] = {
 	/* class:instance:title regex	isfloating	workspace (0=current)*/
 	{ "Firefox",			False,		0 },
 	{ "Gimp",			True,		0 },
-	{ "MPlayer",			True,		0 },
+	{ "[Mm][Pp]layer",		True,		0 },
+	{ "[Mm][Pp]layer2",		True,		0 },
 	{ "Vlc",			True,		0 },
 	{ "Xine",			True,		0 },
 	{ "Audacious",			True,		0 },
-	{ "gkrellm",			True,		0 },
 	{ "pidgin",			True,		0 },	
 	{ "Xpdf",			True,		0 },	
 };
@@ -58,9 +58,9 @@ Layout layouts[] = {
 /*#define SUPERKEY			Sup1Mask*/
 Key keys[] = {
 	/* modifier			key		function	argument */
-	{ MODKEY,			XK_x,		spawn,		"exec x-terminal-emulator" },
-	{ MODKEY,			XK_a ,		spawn,		"exec urxvt" },
-	{ MODKEY|ShiftMask,		XK_z,		spawn,		"exec dwm-choose" },
+	{ MODKEY|ShiftMask,		XK_u,		spawn,		"exec x-terminal-emulator" },
+	{ MODKEY,			XK_u ,		spawn,		"exec urxvt" },
+	{ MODKEY|ShiftMask,		XK_p,		spawn,		"exec dwm-choose" },
 	{ MODKEY,			XK_Tab,		focusnext,	NULL },
 	{ MODKEY|ShiftMask,		XK_Tab,		focusprev,	NULL },
 	{ MODKEY,			XK_Return,	zoom,		NULL },
@@ -69,7 +69,7 @@ Key keys[] = {
 	{ MODKEY,			XK_p,		focusprev,	NULL },
 	{ MODKEY|ControlMask,		XK_u,		setmwfact,	"+0.05" },
 	{ MODKEY|ControlMask,		XK_i,		setmwfact,	"-0.05" },
-	{ MODKEY|ShiftMask,		XK_h,		popstack,	NULL },
+	{ MODKEY|ShiftMask,		XK_c,		popstack,	NULL },
 	{ MODKEY|ShiftMask,		XK_i,		pushstack,	NULL },
 	{ MODKEY|ControlMask,		XK_n,		wscount,	"1" },
 	{ MODKEY|ControlMask|ShiftMask,	XK_n,		wscount,	"-1" },
