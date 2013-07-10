@@ -27,6 +27,12 @@ Rule rules[] = {
 #define MAXWSTEXTWIDTH		 6	/* must be 2*(strlen(MAXWORKSPACES)+1)  */
 #define MAXXINERAMASCREENS	 2
 
+/* volume management via status bar - undefine VOLUME to deactivate */
+#define VOLUME
+int vw = 16; /* pixels from the right to activate volume management on bar */
+const char *volup   = "amixer set Master 5%+";
+const char *voldown = "amixer set Master 5%-";
+
 /* ugly: depending on constants above but needed by layouts below */
 double mwfact[MAXXINERAMASCREENS][MAXWORKSPACES];
 Bool domwfact[MAXXINERAMASCREENS] = {True};
@@ -75,6 +81,7 @@ Key keys[] = {
 	{ MODKEY|ShiftMask,		XK_Tab,		focusprev,	NULL },
 	{ MODKEY|ShiftMask,		XK_space,	togglefloating,	NULL },
 	{ MODKEY|ShiftMask,		XK_c,		killclient,	NULL },
+	{ MODKEY|ShiftMask,		XK_s,		swapscreen,	"1" },
 	{ MODKEY,			XK_1,		view,		"1" },
 	{ MODKEY,			XK_2,		view,		"2" },
 	{ MODKEY,			XK_3,		view,		"3" },
