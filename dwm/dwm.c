@@ -47,6 +47,9 @@
 #define LENGTH(x)		(sizeof x / sizeof x[0])
 #define MOUSEMASK		(BUTTONMASK | PointerMotionMask)
 
+/* constants */
+const char* NULL2 = "";  /* ugly, dirty hack for out of band communication */
+
 /* enums */
 enum { BarTop, BarBot, BarOff };			/* bar position */
 enum { CurNormal, CurResize, CurMove, CurLast };	/* cursor */
@@ -156,7 +159,6 @@ void maprequest(XEvent *e);
 Client *nexttiled(Client *c, unsigned int screen);
 void movemouse(Client *c);
 void moveto(const char *arg);
-void moveto(const char *arg);
 void popstack(const char *arg);
 void processrules(Client *c);
 void propertynotify(XEvent *e);
@@ -172,8 +174,10 @@ void setclientstate(Client *c, long state);
 void setlayout(const char *arg);
 void setmwfact(const char *arg);
 void setup(void);
-void sigusr1(int notused);
+void sigchld(int unused);
+void sigusr1(int unused);
 void spawn(const char *arg);
+void swapscreen(const char *arg);
 unsigned int textnw(const char *text, unsigned int len);
 unsigned int textw(const char *text);
 void tile(unsigned int s);
@@ -342,16 +346,56 @@ buttonpress(XEvent *e) {
 					else
 						wscount("1");
 				}
+				else if(ev->button == Button4) {
+					viewrel("1");
+				}
+				else if(ev->button == Button5) {
+					viewrel("-1");
+				}
 				return;
 			}
-			if((ev->x < x + blw) && ev->button == Button1) {
-				setlayout(NULL);
+			if(ev->x < x + blw) {
+				switch (ev->button) {
+					case Button1:
+					case Button4:
+						setlayout(NULL);
+						break;
+
+					case Button3:
+					case Button5:
+						setlayout(NULL2);
+						break;
+				}
 				return;
 			}
-			if (ev->button == Button1)
-				focusnext(NULL);
-			else
-				focusprev(NULL);
+#ifdef VOLUME
+			if(ev->x > sw[s] - vw) {
+				switch (ev->button) {
+					case Button1:
+					case Button4:
+						spawn(volup);
+						break;
+
+					case Button3:
+					case Button5:
+						spawn(voldown);
+						break;
+				}
+				return;
+			}
+#endif
+			switch (ev->button) {
+
+				case Button1:
+				case Button4:
+					focusnext(NULL);
+					break;
+
+				case Button5:
+				default:
+					focusprev(NULL);
+					break;
+			}
 			return;
 		}
 	
@@ -948,7 +992,7 @@ keypress(XEvent *e) {
 	XKeyEvent *ev;
 
 	ev = &e->xkey;
-	keysym = XKeycodeToKeysym(dpy, (KeyCode)ev->keycode, 0);
+	keysym = XkbKeycodeToKeysym(dpy, (KeyCode)ev->keycode, 0, 0);
 	for(i = 0; i < LENGTH(keys); i++)
 		if(keysym == keys[i].keysym
 		&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state))
@@ -1369,7 +1413,11 @@ setlayout(const char *arg) {
 	unsigned int i;
 	unsigned int s = whichscreen();
 
-	if(!arg) {
+	if(arg == NULL2) {
+		if(layout[s][selws[s]-1]-- == &layouts[0])
+			layout[s][selws[s]-1] = &layouts[LENGTH(layouts)-1];
+	}
+	else if(!arg) {
 		if(++layout[s][selws[s]-1] == &layouts[LENGTH(layouts)])
 			layout[s][selws[s]-1] = &layouts[0];
 	}
@@ -1417,6 +1465,9 @@ setup(void) {
 	Window w;
 	XModifierKeymap *modmap;
 	XSetWindowAttributes wa;
+
+	/* clean up any zombies immediately */
+	sigchld(0);
 
 	/* init atoms */
 	wmatom[WMProtocols] = XInternAtom(dpy, "WM_PROTOCOLS", False);
@@ -1535,7 +1586,16 @@ createbarwins(void) {
 }
 
 void
-sigusr1(int notused) {
+sigchld(int unused) {
+	if(signal(SIGCHLD, sigchld) == SIG_ERR) {
+		perror("Can't install SIGCHLD handler");
+		exit(EXIT_FAILURE);
+	}
+	while(0 < waitpid(-1, NULL, WNOHANG));
+}
+
+void
+sigusr1(int unused) {
 	quit(NULL);
 	reload = True;
 }
@@ -1548,20 +1608,16 @@ spawn(const char *arg) {
 		shell = "/bin/sh";
 	if(!arg)
 		return;
-	/* The double-fork construct avoids zombie processes and keeps the code
-	 * clean from stupid signal handlers. */
+
 	if(fork() == 0) {
-		if(fork() == 0) {
-			if(dpy)
-				close(ConnectionNumber(dpy));
-			setsid();
-			execl(shell, shell, "-c", arg, (char *)NULL);
-			fprintf(stderr, "dwm: execl '%s -c %s'", shell, arg);
-			perror(" failed");
-		}
-		exit(0);
+		if(dpy)
+			close(ConnectionNumber(dpy));
+		setsid();
+		execl(shell, shell, "-c", arg, (char *)NULL);
+		fprintf(stderr, "dwm: execl '%s -c %s'", shell, arg);
+		perror(" failed");
+		exit(EXIT_SUCCESS);
 	}
-	wait(0);
 }
 
 void
@@ -1621,6 +1677,8 @@ warpmouserel(const char *arg) {
 
 	x -= sx[source];
 	y -= sy[source];
+	x = (double)x / (double)sw[source] * sw[target];
+	y = (double)y / (double)sh[source] * sh[target];
 
         if (x >= sw[target])
                 x = sw[target]-1;
@@ -1713,7 +1771,7 @@ tileleft(unsigned int s) {
 	for(i = 0, c = mc = nexttiled(clients, s); c; c = nexttiled(c->next, s), i++) {
 		c->ismax = False;
 		if(i == 0) { /* master */
-			nx = wax[s] + waw[s] - mw + 2 * c->border;
+			nx = wax[s] + waw[s] - mw;
 			nw = mw - 2 * c->border;
 			nh = wah[s] - 2 * c->border;
 		}
@@ -1767,6 +1825,7 @@ togglemax(const char *arg) {
 	if((layout[sel->screen][selws[sel->screen]-1]->arrange != floating) && ! sel->isfloating)
 		return;
 	if((sel->ismax = !sel->ismax)) {
+		setborderbyfloat(sel, False);
 		sel->rx = sel->x;
 		sel->ry = sel->y;
 		sel->rw = sel->w;
@@ -1809,6 +1868,8 @@ warpmouse(const char *arg) {
 
 	x -= sx[source];
 	y -= sy[source];
+	x = (double)x / (double)sw[source] * sw[target];
+	y = (double)y / (double)sh[source] * sh[target];
 
         if (x >= sw[target])
                 x = sw[target]-1;
@@ -1851,7 +1912,7 @@ wscount(const char *arg) {
 	unsigned int s = whichscreen();
 	
 	i = arg ? atoi(arg) : 0;
-	if (i == 0 )
+	if (i == 0)
 		return;   
 	if (i > 0) {
 		if (workspaces[s] + i > MAXWORKSPACES) {
@@ -1895,6 +1956,29 @@ wscount(const char *arg) {
 		}
 	}
 	updatewstext(s);
+	arrange();
+}
+
+void
+swapscreen(const char *arg) {
+	Client *c;
+	int i;
+	
+	i = arg ? atoi(arg) : 0;
+	while (i < 0)
+		i += screenmax;
+	while (i >= screenmax)
+		i -= screenmax;
+	if (i == 0)
+		return;
+
+	for(c = clients; c; c = c->next)
+		if (c->workspace == selws[c->screen]) {
+			c->screen += i;
+			if (c->screen >= screenmax)
+				c->screen -= screenmax;
+			c->workspace = selws[c->screen];
+		}
 	arrange();
 }
 
@@ -1958,7 +2042,7 @@ updatebarpos(void) {
 			XMoveWindow(dpy, barwin[s], sx[s], sy[s] + wah[s]);
 			break;
 		case BarOff:
-			XMoveWindow(dpy, barwin[s], sx[s], sy[s] - bh);
+			XMoveWindow(dpy, barwin[s], sx[s], -bh);
 			break;
 		}
 	}
@@ -2139,7 +2223,6 @@ updatexinerama(void) {
 			c->workspace = 0;
 	XFree(xinescreens);
 	dc.drawable = XCreatePixmap(dpy, root, totalw, bh, DefaultDepth(dpy, screen)); 
-	createbarwins();
 }
 
 int

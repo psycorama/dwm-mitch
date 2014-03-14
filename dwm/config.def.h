@@ -32,6 +32,12 @@ Rule rules[] = {
 #define MAXWSTEXTWIDTH		 6	/* must be 2*(strlen(MAXWORKSPACES)+1)  */
 #define MAXXINERAMASCREENS	 2
 
+/* volume management via status bar - undefine VOLUME to deactivate */
+#define VOLUME
+int vw = 16; /* pixels from the right to activate volume management on bar */
+const char *volup   = "amixer set Master 5%+";
+const char *voldown = "amixer set Master 5%-";
+
 /* ugly: depending on constants above but needed by layouts below */
 double mwfact[MAXXINERAMASCREENS][MAXWORKSPACES];
 Bool domwfact[MAXXINERAMASCREENS] = {True};
@@ -69,6 +75,27 @@ Key keys[] = {
 	{ MODKEY,			XK_p,		focusprev,	NULL },
 	{ MODKEY|ControlMask,		XK_u,		setmwfact,	"+0.05" },
 	{ MODKEY|ControlMask,		XK_i,		setmwfact,	"-0.05" },
+	{ MODKEY|ShiftMask,		XK_s,		swapscreen,	"1" },
+	{ MODKEY,			XK_1,		view,		"1" },
+	{ MODKEY,			XK_2,		view,		"2" },
+	{ MODKEY,			XK_3,		view,		"3" },
+	{ MODKEY,			XK_4,		view,		"4" },
+	{ MODKEY,			XK_5,		view,		"5" },
+	{ MODKEY,			XK_6,		view,		"6" },
+	{ MODKEY,			XK_7,		view,		"7" },
+	{ MODKEY,			XK_8,		view,		"8" },
+	{ MODKEY,			XK_9,		view,		"9" },
+	{ MODKEY,			XK_0,		view,		"10" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_1,		moveto,		"1" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_2,		moveto,		"2" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_3,		moveto,		"3" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_4,		moveto,		"4" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_5,		moveto,		"5" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_6,		moveto,		"6" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_7,		moveto,		"7" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_8,		moveto,		"8" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_9,		moveto,		"9" },
+	{ MODKEY|ControlMask|ShiftMask,	XK_0,		moveto,		"10" },
 	{ MODKEY|ShiftMask,		XK_h,		popstack,	NULL },
 	{ MODKEY|ShiftMask,		XK_i,		pushstack,	NULL },
 	{ MODKEY|ControlMask,		XK_n,		wscount,	"1" },
